@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ClassCount · Session Tracker</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+    <link href="index_files/css2.css" rel="stylesheet">
     <style>
         :root {
             /* Light theme - Athletic Premium */
@@ -24,6 +24,8 @@
             --success-light: #e8f5e9;
             --danger-color: #ff1744;
             --danger-light: #ffebee;
+            --warning-color: #f9a825;
+            --warning-light: #fff8e1;
             --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
             --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
             --shadow-md: 0 4px 20px rgba(0,0,0,0.12);
@@ -48,10 +50,18 @@
                 --accent-light: #2a1a15;
                 --success-light: #0d2818;
                 --danger-light: #2a0d15;
+                --warning-light: #2a1f0d;
                 --shadow-xs: 0 1px 2px rgba(0,0,0,0.3);
                 --shadow-sm: 0 2px 8px rgba(0,0,0,0.4);
                 --shadow-md: 0 4px 20px rgba(0,0,0,0.5);
                 --shadow-lg: 0 8px 40px rgba(0,0,0,0.6);
+            }
+        }
+
+        /* Dark mode date picker icon fix */
+        @media (prefers-color-scheme: dark) {
+            input[type="date"]::-webkit-calendar-picker-indicator {
+                filter: invert(1);
             }
         }
 
@@ -152,7 +162,8 @@
         }
 
         input[type="text"],
-        input[type="date"] {
+        input[type="date"],
+        input[type="time"] {
             flex: 1;
             height: 52px;
             padding: 0 16px;
@@ -193,6 +204,11 @@
             color: white;
         }
 
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
         .btn-primary:hover {
             background: var(--accent-hover);
             transform: translateY(-1px);
@@ -229,6 +245,12 @@
             width: 100%;
         }
 
+        .btn-sm {
+            height: 36px;
+            padding: 0 16px;
+            font-size: 0.85rem;
+        }
+
         /* Client list */
         #clientsList {
             display: flex;
@@ -254,9 +276,67 @@
             transform: translateX(4px);
         }
 
-        .client-item span {
+        .client-item-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .client-item-name {
             font-weight: 500;
             font-size: 0.95rem;
+        }
+
+        .client-item-delete {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            opacity: 0;
+            transition: all 0.2s ease;
+        }
+
+        .client-item:hover .client-item-delete {
+            opacity: 1;
+        }
+
+        .client-item-delete:hover {
+            background: var(--danger-light);
+            color: var(--danger-color);
+        }
+
+        .client-item-edit {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            border: 1.5px solid var(--border-color);
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            opacity: 0;
+            transition: all 0.2s ease;
+        }
+
+        .client-item:hover .client-item-edit {
+            opacity: 1;
+        }
+
+        .client-item-edit:hover {
+            background: var(--warning-light);
+            color: var(--warning-color);
+            border-color: var(--warning-color);
         }
 
         /* Session cards */
@@ -311,10 +391,115 @@
             font-weight: 600;
             color: var(--text-primary);
             cursor: text;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .session-card-title:hover {
             opacity: 0.8;
+        }
+        
+        .session-card-template {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Template cards */
+        #templatesList {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .template-card {
+            padding: 18px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            transition: all 0.25s ease;
+        }
+
+        .template-card:hover {
+            border-color: var(--accent-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .template-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .template-card-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .template-card-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .template-card-schedule {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .template-card-generate {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .template-card-actions .btn-sm:hover {
+            background: var(--warning-light);
+            color: var(--warning-color);
+            border-color: var(--warning-color);
+        }
+
+        .day-checkboxes {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .day-checkbox {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 44px;
+            height: 44px;
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 0 8px;
+        }
+
+        .day-checkbox:has(input:checked) {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: white;
+        }
+
+        .day-checkbox:has(input:checked):hover {
+            border-color: var(--accent-primary);
+        }
+
+        .day-checkbox input {
+            display: none;
         }
 
         /* Empty state */
@@ -523,8 +708,9 @@
             display: none !important;
         }
 
-        /* Collapsible clients section */
-        #clientsSection.collapsed {
+        /* Collapsible sections */
+        #clientsSection.collapsed,
+        #templatesSection.collapsed {
             display: none;
         }
 
@@ -553,8 +739,16 @@
     <section>
         <h2>Sessions</h2>
         <button class="btn-secondary btn-full" id="newSessionBtn">+ New Session</button>
-        <div id="sessionsList" style="margin-top: 16px;">
-            <div class="empty-state">No sessions yet. Create your first session!</div>
+        <div id="sessionsList" style="margin-top: 16px;"><div class="empty-state">No sessions yet</div></div>
+    </section>
+
+    <!-- Templates Section -->
+    <section>
+        <h2>Recurring Templates</h2>
+        <button class="btn-secondary btn-full" id="newTemplateBtn">+ New Template</button>
+        <button class="btn-ghost" id="toggleTemplatesBtn" style="font-size: 0.8rem; margin-bottom: 12px;">Hide templates ▾</button>
+        <div id="templatesSection">
+            <div id="templatesList" style="margin-top: 16px;"><div class="empty-state">No templates yet</div></div>
         </div>
     </section>
 
@@ -567,614 +761,1333 @@
         </div>
         <button class="btn-ghost" id="toggleClientsBtn" style="font-size: 0.8rem; margin-bottom: 12px;">Hide clients ▾</button>
         <div id="clientsSection">
-            <ul id="clientsList">
-                <li class="empty-state">No clients yet. Add your first client!</li>
-            </ul>
+            <ul id="clientsList"><li class="empty-state">No clients yet</li></ul>
         </div>
     </section>
 
-        <!-- Export Section -->
-        <section class="export-section">
-            <h2>Data</h2>
-            <div class="export-grid">
-                <button class="btn-secondary" id="exportCSVBtn">Export CSV</button>
-                <button class="btn-secondary" id="copyCSVBtn">Copy CSV</button>
-                <button class="btn-secondary" id="backupJSONBtn">Backup JSON</button>
-                <button class="btn-secondary" id="restoreJSONBtn">Restore JSON</button>
-            </div>
-            <input type="file" id="restoreFileInput" accept=".json" class="hidden">
-            <p class="export-info" id="lastExportInfo">Last export: never</p>
-        </section>
-    </main>
+    <!-- Export Section -->
+    <section class="export-section">
+        <h2>Data</h2>
+        <div class="export-grid">
+            <button class="btn-secondary" id="exportCSVBtn">Export CSV</button>
+            <button class="btn-secondary" id="copyCSVBtn">Copy CSV</button>
+            <button class="btn-secondary" id="backupJSONBtn">Backup JSON</button>
+            <button class="btn-secondary" id="restoreJSONBtn">Restore JSON</button>
+        </div>
+        <input type="file" id="restoreFileInput" accept=".json" class="hidden">
+        <p class="export-info" id="lastExportInfo">Last export: never</p>
+    </section>
+</main>
 
-    <!-- Toast -->
-    <div id="toast"></div>
+<!-- Toast -->
+<div id="toast"></div>
 
-    <!-- Create Session Modal -->
-    <div id="createSessionModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">New Session</h3>
-                <button class="modal-close" id="closeSessionModal">×</button>
-            </div>
-            <div class="form-group">
-                <label for="sessionDateInput">Date</label>
-                <input type="date" id="sessionDateInput">
-            </div>
-            <div class="form-group">
-                <label for="sessionClassInput">Class Name</label>
-                <input type="text" id="sessionClassInput" placeholder="e.g., Morning HIIT" maxlength="50">
-            </div>
-            <div class="modal-actions">
-                <button class="btn-secondary" id="cancelSessionBtn">Cancel</button>
-                <button class="btn-primary" id="createSessionBtn">Create</button>
-            </div>
+<!-- Create Session Modal -->
+<div id="createSessionModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">New Session</h3>
+            <button class="modal-close" id="closeSessionModal">×</button>
+        </div>
+        <div class="form-group">
+            <label for="sessionDateInput">Date</label>
+            <input type="date" id="sessionDateInput">
+        </div>
+        <div class="form-group">
+            <label for="sessionClassInput">Class Name</label>
+            <input type="text" id="sessionClassInput" placeholder="e.g., Morning HIIT" maxlength="50">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" id="cancelSessionBtn">Cancel</button>
+            <button class="btn-primary" id="createSessionBtn">Create</button>
         </div>
     </div>
+</div>
 
-    <!-- Attendance Modal -->
-    <div id="attendanceModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="attendanceModalTitle">Attendance</h3>
-                <button class="modal-close" id="closeAttendanceModal">×</button>
-            </div>
-            <ul id="attendanceList">
-                <li class="empty-state">No clients to check in</li>
-            </ul>
-            <div class="modal-actions">
-                <button class="btn-secondary" id="closeAttendanceModalBtn">Close</button>
-                <button class="btn-primary" id="saveAttendanceBtn">Save</button>
-            </div>
+<!-- Attendance Modal -->
+<div id="attendanceModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title" id="attendanceModalTitle">Attendance</h3>
+            <button class="modal-close" id="closeAttendanceModal">×</button>
+        </div>
+        <ul id="attendanceList">
+            <li class="empty-state">No clients to check in</li>
+        </ul>
+        <div class="modal-actions">
+            <button class="btn-secondary" id="closeAttendanceModalBtn">Close</button>
+            <button class="btn-primary" id="saveAttendanceBtn">Save</button>
         </div>
     </div>
+</div>
 
-    <!-- Trainer Name Modal -->
-    <div id="trainerNameModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Welcome</h3>
-            </div>
-            <div class="form-group">
-                <label for="trainerNameInput">What's your name?</label>
-                <input type="text" id="trainerNameInput" placeholder="Enter your name">
-            </div>
-            <div class="modal-actions">
-                <button class="btn-primary" id="saveTrainerNameBtn">Get Started</button>
-            </div>
+<!-- Trainer Name Modal -->
+<div id="trainerNameModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Welcome</h3>
+        </div>
+        <div class="form-group">
+            <label for="trainerNameInput">What's your name?</label>
+            <input type="text" id="trainerNameInput" placeholder="Enter your name" value="Adam">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-primary" id="saveTrainerNameBtn">Get Started</button>
         </div>
     </div>
+</div>
 
-    <script>
-        // Store class
-        class Store {
-            constructor() {
-                this.CLIENTS_KEY = '6amreg_clients';
-                this.SESSIONS_KEY = '6amreg_sessions';
-                this.META_KEY = '6amreg_meta';
-            }
+<!-- Delete Client Modal -->
+<div id="deleteClientModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Delete Client</h3>
+            <button class="modal-close" id="closeDeleteClientModal">×</button>
+        </div>
+        <p id="deleteClientMessage" style="color: var(--text-secondary); margin-bottom: 8px;"></p>
+        <p id="deleteClientSessions" style="font-size: 0.85rem; color: var(--text-muted);"></p>
+        <div class="modal-actions">
+            <button class="btn-secondary" id="cancelDeleteClientBtn">Cancel</button>
+            <button class="btn-primary" id="confirmDeleteClientBtn" style="background: var(--danger-color);">Delete</button>
+        </div>
+    </div>
+</div>
 
-            getClients() {
-                try {
-                    const item = localStorage.getItem(this.CLIENTS_KEY);
-                    return item ? JSON.parse(item) : [];
-                } catch (e) {
-                    if (e.name === 'QuotaExceededError') {
-                        showToast('Storage full', 'error');
-                    }
-                    return [];
+<!-- Edit Client Modal -->
+<div id="editClientModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Edit Client</h3>
+            <button class="modal-close" id="closeEditClientModal">×</button>
+        </div>
+        <div class="form-group">
+            <label for="editClientNameInput">Client Name</label>
+            <input type="text" id="editClientNameInput" placeholder="Enter client name" maxlength="50">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" id="cancelEditClientBtn">Cancel</button>
+            <button class="btn-primary" id="saveEditClientBtn">Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Session Modal -->
+<div id="editSessionModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Edit Session</h3>
+            <button class="modal-close" id="closeEditSessionModal">×</button>
+        </div>
+        <div class="form-group">
+            <label for="editSessionDateInput">Date</label>
+            <input type="date" id="editSessionDateInput">
+        </div>
+        <div class="form-group">
+            <label for="editSessionNameInput">Session Name</label>
+            <input type="text" id="editSessionNameInput" placeholder="Enter session name" maxlength="50">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" id="cancelEditSessionBtn">Cancel</button>
+            <button class="btn-primary" id="saveEditSessionBtn">Save</button>
+        </div>
+        <div style="margin-top: 12px; border-top: 1px solid var(--border-color); padding-top: 12px;">
+            <button class="btn-ghost btn-full" id="deleteSessionBtn" style="color: var(--danger-color); font-size: 0.85rem;">Delete Session</button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Session Modal -->
+<div id="deleteSessionModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Delete Session</h3>
+            <button class="modal-close" id="closeDeleteSessionModal">×</button>
+        </div>
+        <p id="deleteSessionMessage" style="color: var(--text-secondary); margin-bottom: 8px;"></p>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">This will permanently remove the session and all attendance records for it.</p>
+        <div class="modal-actions">
+            <button class="btn-secondary" id="cancelDeleteSessionBtn">Cancel</button>
+            <button class="btn-danger" id="confirmDeleteSessionBtn">Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- Create Template Modal -->
+<div id="createTemplateModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">New Template</h3>
+            <button class="modal-close" id="closeCreateTemplateModal">×</button>
+        </div>
+        <div class="form-group">
+            <label for="templateNameInput">Template Name</label>
+            <input type="text" id="templateNameInput" placeholder="e.g., Morning HIIT" maxlength="50">
+        </div>
+        <div class="form-group">
+            <label>Days of Week</label>
+            <div class="day-checkboxes">
+                <div class="day-checkbox">
+                    <input type="checkbox" id="day-1" value="1">
+                    <label for="day-1">Mon</label>
+                </div>
+                <div class="day-checkbox">
+                    <input type="checkbox" id="day-2" value="2">
+                    <label for="day-2">Tue</label>
+                </div>
+                <div class="day-checkbox">
+                    <input type="checkbox" id="day-3" value="3">
+                    <label for="day-3">Wed</label>
+                </div>
+                <div class="day-checkbox">
+                    <input type="checkbox" id="day-4" value="4">
+                    <label for="day-4">Thu</label>
+                </div>
+                <div class="day-checkbox">
+                    <input type="checkbox" id="day-5" value="5">
+                    <label for="day-5">Fri</label>
+                </div>
+                <div class="day-checkbox">
+                    <input type="checkbox" id="day-6" value="6">
+                    <label for="day-6">Sat</label>
+                </div>
+                <div class="day-checkbox">
+                    <input type="checkbox" id="day-0" value="0">
+                    <label for="day-0">Sun</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="templateTimeInput">Time</label>
+            <input type="time" id="templateTimeInput" value="06:00">
+        </div>
+        <div class="form-group">
+            <label for="templateStartDateInput">Start Date</label>
+            <input type="date" id="templateStartDateInput">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" id="cancelCreateTemplateBtn">Cancel</button>
+            <button class="btn-primary" id="createTemplateBtn">Create Template</button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Template Modal -->
+<div id="editTemplateModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Edit Template</h3>
+            <button class="modal-close" id="closeEditTemplateModal">×</button>
+        </div>
+        <div class="form-group">
+            <label for="editTemplateNameInput">Template Name</label>
+            <input type="text" id="editTemplateNameInput" placeholder="e.g., Morning HIIT" maxlength="50">
+        </div>
+        <div class="form-group">
+            <label>Days of Week</label>
+            <div class="day-checkboxes">
+                <div class="day-checkbox">
+                    <input type="checkbox" id="edit-day-1" value="1">
+                    <label for="edit-day-1">Mon</label>
+                </div>
+                <div class="day-checkbox">
+                    <input type="checkbox" id="edit-day-2" value="2">
+                    <label for="edit-day-2">Tue</label>
+                </div>
+                <div class="day-checkbox">
+                    <input type="checkbox" id="edit-day-3" value="3">
+                    <label for="edit-day-3">Wed</label>
+                </div>
+                <div class="day-checkbox">
+                    <input type="checkbox" id="edit-day-4" value="4">
+                    <label for="edit-day-4">Thu</label>
+                </div>
+                <div class="day-checkbox">
+                    <input type="checkbox" id="edit-day-5" value="5">
+                    <label for="edit-day-5">Fri</label>
+                </div>
+                <div class="day-checkbox">
+                    <input type="checkbox" id="edit-day-6" value="6">
+                    <label for="edit-day-6">Sat</label>
+                </div>
+                <div class="day-checkbox">
+                    <input type="checkbox" id="edit-day-0" value="0">
+                    <label for="edit-day-0">Sun</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="editTemplateTimeInput">Time</label>
+            <input type="time" id="editTemplateTimeInput" value="06:00">
+        </div>
+        <div class="form-group">
+            <label for="editTemplateStartDateInput">Start Date</label>
+            <input type="date" id="editTemplateStartDateInput">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" id="cancelEditTemplateBtn">Cancel</button>
+            <button class="btn-primary" id="saveEditTemplateBtn">Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Template Modal -->
+<div id="deleteTemplateModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Delete Template</h3>
+            <button class="modal-close" id="closeDeleteTemplateModal">×</button>
+        </div>
+        <p id="deleteTemplateMessage" style="color: var(--text-secondary); margin-bottom: 8px;"></p>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">Generated sessions will be kept.</p>
+        <div class="modal-actions">
+            <button class="btn-secondary" id="cancelDeleteTemplateBtn">Cancel</button>
+            <button class="btn-primary" id="confirmDeleteTemplateBtn" style="background: var(--danger-color);">Delete</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Store class
+    class Store {
+        constructor() {
+            this.CLIENTS_KEY = '6amreg_clients';
+            this.SESSIONS_KEY = '6amreg_sessions';
+            this.TEMPLATES_KEY = '6amreg_templates';
+            this.META_KEY = '6amreg_meta';
+        }
+
+        getClients() {
+            try {
+                const item = localStorage.getItem(this.CLIENTS_KEY);
+                return item ? JSON.parse(item) : [];
+            } catch (e) {
+                if (e.name === 'QuotaExceededError') {
+                    showToast('Storage full', 'error');
                 }
-            }
-
-            setClients(clients) {
-                try {
-                    localStorage.setItem(this.CLIENTS_KEY, JSON.stringify(clients));
-                    return true;
-                } catch (e) {
-                    if (e.name === 'QuotaExceededError') {
-                        showToast('Storage full', 'error');
-                    }
-                    return false;
-                }
-            }
-
-            getSessions() {
-                try {
-                    const item = localStorage.getItem(this.SESSIONS_KEY);
-                    return item ? JSON.parse(item) : [];
-                } catch (e) {
-                    if (e.name === 'QuotaExceededError') {
-                        showToast('Storage full', 'error');
-                    }
-                    return [];
-                }
-            }
-
-            setSessions(sessions) {
-                try {
-                    localStorage.setItem(this.SESSIONS_KEY, JSON.stringify(sessions));
-                    return true;
-                } catch (e) {
-                    if (e.name === 'QuotaExceededError') {
-                        showToast('Storage full', 'error');
-                    }
-                    return false;
-                }
-            }
-
-            getMeta() {
-                try {
-                    const item = localStorage.getItem(this.META_KEY);
-                    return item ? JSON.parse(item) : { trainerName: null, lastExportDateISO: null };
-                } catch (e) {
-                    return { trainerName: null, lastExportDateISO: null };
-                }
-            }
-
-            setMeta(meta) {
-                try {
-                    localStorage.setItem(this.META_KEY, JSON.stringify(meta));
-                    return true;
-                } catch (e) {
-                    if (e.name === 'QuotaExceededError') {
-                        showToast('Storage full', 'error');
-                    }
-                    return false;
-                }
-            }
-
-            hasTrainerName() {
-                const meta = this.getMeta();
-                return meta.trainerName && meta.trainerName.length > 0;
+                return [];
             }
         }
 
-        const store = new Store();
+        setClients(clients) {
+            try {
+                localStorage.setItem(this.CLIENTS_KEY, JSON.stringify(clients));
+                return true;
+            } catch (e) {
+                if (e.name === 'QuotaExceededError') {
+                    showToast('Storage full', 'error');
+                }
+                return false;
+            }
+        }
 
-        // Utilities
-        function generateUUID() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-                const r = Math.random() * 16 | 0;
-                const v = c === 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
+        getSessions() {
+            try {
+                const item = localStorage.getItem(this.SESSIONS_KEY);
+                return item ? JSON.parse(item) : [];
+            } catch (e) {
+                if (e.name === 'QuotaExceededError') {
+                    showToast('Storage full', 'error');
+                }
+                return [];
+            }
+        }
+
+        setSessions(sessions) {
+            try {
+                localStorage.setItem(this.SESSIONS_KEY, JSON.stringify(sessions));
+                return true;
+            } catch (e) {
+                if (e.name === 'QuotaExceededError') {
+                    showToast('Storage full', 'error');
+                }
+                return false;
+            }
+        }
+
+        getTemplates() {
+            try {
+                const item = localStorage.getItem(this.TEMPLATES_KEY);
+                return item ? JSON.parse(item) : [];
+            } catch (e) {
+                if (e.name === 'QuotaExceededError') {
+                    showToast('Storage full', 'error');
+                }
+                return [];
+            }
+        }
+
+        setTemplates(templates) {
+            try {
+                localStorage.setItem(this.TEMPLATES_KEY, JSON.stringify(templates));
+                return true;
+            } catch (e) {
+                if (e.name === 'QuotaExceededError') {
+                    showToast('Storage full', 'error');
+                }
+                return false;
+            }
+        }
+
+        deleteTemplate(templateId) {
+            const templates = this.getTemplates();
+            const updated = templates.filter(t => t.id !== templateId);
+            return this.setTemplates(updated);
+        }
+
+        getMeta() {
+            try {
+                const item = localStorage.getItem(this.META_KEY);
+                return item ? JSON.parse(item) : { trainerName: null, lastExportDateISO: null };
+            } catch (e) {
+                return { trainerName: null, lastExportDateISO: null };
+            }
+        }
+
+        setMeta(meta) {
+            try {
+                localStorage.setItem(this.META_KEY, JSON.stringify(meta));
+                return true;
+            } catch (e) {
+                if (e.name === 'QuotaExceededError') {
+                    showToast('Storage full', 'error');
+                }
+                return false;
+            }
+        }
+
+        hasTrainerName() {
+            const meta = this.getMeta();
+            return meta.trainerName && meta.trainerName.length > 0;
+        }
+    }
+
+    const store = new Store();
+
+    // Utilities
+    function generateUUID() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+            const r = Math.random() * 16 | 0;
+            const v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function showToast(message, type = '') {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = 'toast show ' + type;
+        setTimeout(() => toast.className = 'toast', 3000);
+    }
+
+    // Theme
+    function initTheme() {
+        const themeToggle = document.getElementById('themeToggle');
+        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        themeToggle.textContent = isDark ? '☾' : '☀';
+        themeToggle.addEventListener('click', toggleTheme);
+    }
+
+    function toggleTheme() {
+        const root = document.documentElement;
+        const themeToggle = document.getElementById('themeToggle');
+        const isLight = getComputedStyle(root).getPropertyValue('--bg-primary').trim() === '#fafafa';
+        
+        if (isLight) {
+            root.style.setProperty('--bg-primary', '#0a0a0a');
+            root.style.setProperty('--bg-secondary', '#141414');
+            root.style.setProperty('--bg-tertiary', '#1f1f1f');
+            root.style.setProperty('--text-primary', '#ffffff');
+            root.style.setProperty('--text-secondary', '#a0a0a0');
+            root.style.setProperty('--text-muted', '#666666');
+            root.style.setProperty('--border-color', '#2a2a2a');
+            root.style.setProperty('--accent-light', '#2a1a15');
+            // Fix date picker icon for manual toggle
+            const style = document.createElement('style');
+            style.id = 'dark-mode-date-fix';
+            style.innerHTML = 'input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }';
+            document.head.appendChild(style);
+            themeToggle.textContent = '☀';
+        } else {
+            root.style.setProperty('--bg-primary', '#fafafa');
+            root.style.setProperty('--bg-secondary', '#ffffff');
+            root.style.setProperty('--bg-tertiary', '#f0f0f0');
+            root.style.setProperty('--text-primary', '#0a0a0a');
+            root.style.setProperty('--text-secondary', '#666666');
+            root.style.setProperty('--text-muted', '#999999');
+            root.style.setProperty('--border-color', '#e5e5e5');
+            root.style.setProperty('--accent-light', '#fff4f0');
+            // Remove date picker icon fix for manual toggle
+            const style = document.getElementById('dark-mode-date-fix');
+            if (style) style.remove();
+            themeToggle.textContent = '☾';
+        }
+    }
+
+    // Clients
+    function renderClients() {
+        const list = document.getElementById('clientsList');
+        const clients = store.getClients();
+        list.innerHTML = '';
+
+        if (clients.length === 0) {
+            list.innerHTML = '<li class="empty-state">No clients yet</li>';
+            return;
+        }
+
+        [...clients].sort((a, b) => a.name.localeCompare(b.name)).forEach(client => {
+            const li = document.createElement('li');
+            li.className = 'client-item';
+            li.innerHTML = `
+                <div class="client-item-content">
+                    <span class="client-item-name">${escapeHtml(client.name)}</span>
+                </div>
+                <button class="client-item-edit" title="Edit client" data-client-id="${client.id}">✏️</button>
+                <button class="client-item-delete" title="Delete client" data-client-id="${client.id}">🗑</button>
+            `;
+            // Edit button click
+            li.querySelector('.client-item-edit').addEventListener('click', (e) => {
+                e.stopPropagation();
+                editClient(client.id, client.name);
             });
+            // Delete button click
+            li.querySelector('.client-item-delete').addEventListener('click', (e) => {
+                e.stopPropagation();
+                openDeleteClientModal(client.id, client.name);
+            });
+            list.appendChild(li);
+        });
+    }
+
+    // Delete Client
+    let currentDeleteClientId = null;
+
+    function openDeleteClientModal(clientId, clientName) {
+        currentDeleteClientId = clientId;
+        const sessions = store.getSessions();
+        
+        // Count sessions client attended
+        const sessionCount = sessions.filter(s => s.attendees?.includes(clientId)).length;
+        
+        const message = document.getElementById('deleteClientMessage');
+        const sessionsText = document.getElementById('deleteClientSessions');
+        
+        message.innerHTML = `Are you sure you want to delete <strong>${escapeHtml(clientName)}</strong>?`;
+        
+        if (sessionCount === 0) {
+            sessionsText.textContent = 'This client has not attended any sessions.';
+        } else if (sessionCount === 1) {
+            sessionsText.textContent = 'This client attended 1 session. Their attendance record will be removed.';
+        } else {
+            sessionsText.textContent = `This client attended ${sessionCount} sessions. Their attendance records will be removed.`;
+        }
+        
+        document.getElementById('deleteClientModal').classList.add('show');
+    }
+
+    function confirmDeleteClient() {
+        if (!currentDeleteClientId) return;
+        
+        const clientId = currentDeleteClientId;
+        
+        // Cascade delete: remove client from all session attendance records
+        const sessions = store.getSessions();
+        const updatedSessions = sessions.map(s => ({
+            ...s,
+            attendees: s.attendees?.filter(id => id !== clientId) || []
+        }));
+        
+        // Remove client from clients list
+        const clients = store.getClients();
+        const updatedClients = clients.filter(c => c.id !== clientId);
+        
+        // Save both updates
+        if (store.setSessions(updatedSessions) && store.setClients(updatedClients)) {
+            document.getElementById('deleteClientModal').classList.remove('show');
+            renderClients();
+            renderSessions();
+            showToast('Client deleted', 'success');
+        } else {
+            showToast('Failed to delete', 'error');
+        }
+        
+        currentDeleteClientId = null;
+    }
+
+    function addClient() {
+        const input = document.getElementById('clientNameInput');
+        const name = input.value.trim();
+        
+        if (!name) {
+            showToast('Enter a client name', 'error');
+            return;
+        }
+        if (name.length > 50) {
+            showToast('Name too long', 'error');
+            return;
+        }
+        
+        const clients = store.getClients();
+        if (clients.some(c => c.name.toLowerCase() === name.toLowerCase())) {
+            showToast('Name already exists', 'error');
+            return;
+        }
+        
+        const newClient = { id: generateUUID(), name };
+        if (store.setClients([...clients, newClient])) {
+            input.value = '';
+            renderClients();
+            showToast('Client added');
+        } else {
+            showToast('Failed to add', 'error');
+        }
+    }
+
+    // Edit Client Modal
+    let currentEditClientId = null;
+
+    function openEditClientModal(clientId, currentName) {
+        currentEditClientId = clientId;
+        document.getElementById('editClientNameInput').value = currentName;
+        document.getElementById('editClientModal').classList.add('show');
+    }
+
+    function saveEditClient() {
+        const newName = document.getElementById('editClientNameInput').value.trim();
+        if (!newName) {
+            showToast('Name cannot be empty', 'error');
+            return;
+        }
+        if (newName.length > 50) {
+            showToast('Name too long', 'error');
+            return;
+        }
+        
+        const clients = store.getClients();
+        if (clients.some(c => c.id !== currentEditClientId && c.name.toLowerCase() === newName.toLowerCase())) {
+            showToast('Name already exists', 'error');
+            return;
+        }
+        
+        const updated = clients.map(c => c.id === currentEditClientId ? { ...c, name: newName } : c);
+        if (store.setClients(updated)) {
+            document.getElementById('editClientModal').classList.remove('show');
+            renderClients();
+            showToast('Client updated');
+        }
+        
+        currentEditClientId = null;
+    }
+
+    function editClient(clientId, currentName) {
+        openEditClientModal(clientId, currentName);
+    }
+
+    // Edit Session Modal
+    let currentEditSessionId = null;
+
+    function openEditSessionModal(sessionId, currentDate, currentName) {
+        currentEditSessionId = sessionId;
+        document.getElementById('editSessionDateInput').value = currentDate;
+        document.getElementById('editSessionNameInput').value = currentName;
+        document.getElementById('editSessionModal').classList.add('show');
+        // Delay focus to ensure modal animation completes
+        setTimeout(() => document.getElementById('editSessionDateInput').focus(), 50);
+    }
+
+    function saveEditSession() {
+        const newDate = document.getElementById('editSessionDateInput').value;
+        const newName = document.getElementById('editSessionNameInput').value.trim();
+        
+        if (!newDate) {
+            showToast('Select a date', 'error');
+            return;
+        }
+        if (!newName) {
+            showToast('Name cannot be empty', 'error');
+            return;
+        }
+        if (newName.length > 50) {
+            showToast('Name too long', 'error');
+            return;
+        }
+        
+        const sessions = store.getSessions();
+        const session = sessions.find(s => s.id === currentEditSessionId);
+        
+        // If session has a templateId, editing it breaks the link
+        let updatedSession;
+        if (session && session.templateId) {
+            updatedSession = { ...session, date: newDate, className: newName };
+            delete updatedSession.templateId;
+            showToast('Session updated (template link removed)');
+        } else {
+            updatedSession = { ...session, date: newDate, className: newName };
+            showToast('Session updated');
+        }
+        
+        const updated = sessions.map(s => s.id === currentEditSessionId ? updatedSession : s);
+        if (store.setSessions(updated)) {
+            document.getElementById('editSessionModal').classList.remove('show');
+            renderSessions();
+        }
+        
+        currentEditSessionId = null;
+    }
+
+    function editSession(sessionId, currentDate, currentName) {
+        openEditSessionModal(sessionId, currentDate, currentName);
+    }
+
+    // Delete Session
+    let currentDeleteSessionId = null;
+
+    function openDeleteSessionModal(sessionId) {
+        currentDeleteSessionId = sessionId;
+        const sessions = store.getSessions();
+        const session = sessions.find(s => s.id === sessionId);
+        if (!session) return;
+
+        const message = document.getElementById('deleteSessionMessage');
+        message.innerHTML = `Are you sure you want to delete <strong>${escapeHtml(session.className || 'Untitled')}</strong> on <strong>${new Date(session.date).toLocaleDateString()}</strong>?`;
+        
+        document.getElementById('editSessionModal').classList.remove('show');
+        document.getElementById('deleteSessionModal').classList.add('show');
+    }
+
+    function confirmDeleteSession() {
+        if (!currentDeleteSessionId) return;
+        
+        const sessions = store.getSessions();
+        const updated = sessions.filter(s => s.id !== currentDeleteSessionId);
+        
+        if (store.setSessions(updated)) {
+            document.getElementById('deleteSessionModal').classList.remove('show');
+            renderSessions();
+            showToast('Session deleted', 'success');
+        } else {
+            showToast('Failed to delete', 'error');
+        }
+        
+        currentDeleteSessionId = null;
+    }
+
+    // Sessions
+    function renderSessions() {
+        const list = document.getElementById('sessionsList');
+        const sessions = store.getSessions();
+        list.innerHTML = '';
+
+        if (sessions.length === 0) {
+            list.innerHTML = '<div class="empty-state">No sessions yet</div>';
+            return;
         }
 
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function showToast(message, type = '') {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = 'toast show ' + type;
-            setTimeout(() => toast.className = 'toast', 3000);
-        }
-
-        // Theme
-        function initTheme() {
-            const themeToggle = document.getElementById('themeToggle');
-            const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            themeToggle.textContent = isDark ? '☾' : '☀';
-            themeToggle.addEventListener('click', toggleTheme);
-        }
-
-        function toggleTheme() {
-            const root = document.documentElement;
-            const themeToggle = document.getElementById('themeToggle');
-            const isLight = getComputedStyle(root).getPropertyValue('--bg-primary').trim() === '#fafafa';
+        [...sessions].sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(session => {
+            const date = new Date(session.date);
+            const card = document.createElement('div');
+            card.className = 'session-card';
             
-            if (isLight) {
-                root.style.setProperty('--bg-primary', '#0a0a0a');
-                root.style.setProperty('--bg-secondary', '#141414');
-                root.style.setProperty('--bg-tertiary', '#1f1f1f');
-                root.style.setProperty('--text-primary', '#ffffff');
-                root.style.setProperty('--text-secondary', '#a0a0a0');
-                root.style.setProperty('--text-muted', '#666666');
-                root.style.setProperty('--border-color', '#2a2a2a');
-                root.style.setProperty('--accent-light', '#2a1a15');
-                themeToggle.textContent = '☀';
-            } else {
-                root.style.setProperty('--bg-primary', '#fafafa');
-                root.style.setProperty('--bg-secondary', '#ffffff');
-                root.style.setProperty('--bg-tertiary', '#f0f0f0');
-                root.style.setProperty('--text-primary', '#0a0a0a');
-                root.style.setProperty('--text-secondary', '#666666');
-                root.style.setProperty('--text-muted', '#999999');
-                root.style.setProperty('--border-color', '#e5e5e5');
-                root.style.setProperty('--accent-light', '#fff4f0');
-                themeToggle.textContent = '☾';
+            let templateIndicator = '';
+            if (session.templateId) {
+                const templates = store.getTemplates();
+                const template = templates.find(t => t.id === session.templateId);
+                if (template) {
+                    templateIndicator = `<div class="session-card-template">↻ ${escapeHtml(template.name)}</div>`;
+                }
             }
+            
+            card.innerHTML = `
+                <div class="session-card-header">
+                    <span class="session-card-date">${date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span>
+                    <span class="session-card-count">${session.attendees?.length || 0} attended</span>
+                </div>
+                <div class="session-card-title">
+                    ${escapeHtml(session.className || 'Untitled')}
+                </div>
+                ${templateIndicator}
+            `;
+            card.addEventListener('click', (e) => {
+                // If double-click on title, edit session; otherwise open attendance
+                if (e.target.classList.contains('session-card-title')) {
+                    editSession(session.id, session.date, session.className || 'Untitled');
+                } else {
+                    openAttendanceModal(session.id);
+                }
+            });
+            list.appendChild(card);
+        });
+    }
+
+    function openCreateSessionModal() {
+        const modal = document.getElementById('createSessionModal');
+        const dateInput = document.getElementById('sessionDateInput');
+        const today = new Date();
+        dateInput.value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        document.getElementById('sessionClassInput').value = '';
+        modal.classList.add('show');
+    }
+
+    function createSession() {
+        const date = document.getElementById('sessionDateInput').value;
+        const className = document.getElementById('sessionClassInput').value.trim();
+        
+        if (!date) {
+            showToast('Select a date', 'error');
+            return;
         }
+        
+        const sessions = store.getSessions();
+        const newSession = { id: generateUUID(), date, className: className || 'Untitled', attendees: [] };
+        
+        if (store.setSessions([...sessions, newSession])) {
+            document.getElementById('createSessionModal').classList.remove('show');
+            renderSessions();
+            showToast('Session created');
+        }
+    }
 
-        // Clients
-        function renderClients() {
-            const list = document.getElementById('clientsList');
-            const clients = store.getClients();
-            list.innerHTML = '';
+    // Attendance
+    let currentSessionId = null;
 
-            if (clients.length === 0) {
-                list.innerHTML = '<li class="empty-state">No clients yet</li>';
-                return;
-            }
-
+    function openAttendanceModal(sessionId) {
+        const sessions = store.getSessions();
+        const session = sessions.find(s => s.id === sessionId);
+        if (!session) return;
+        
+        currentSessionId = sessionId;
+        const modal = document.getElementById('attendanceModal');
+        document.getElementById('attendanceModalTitle').textContent = 
+            `${escapeHtml(session.className || 'Untitled')} · ${new Date(session.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}`;
+        
+        const clients = store.getClients();
+        const list = document.getElementById('attendanceList');
+        list.innerHTML = '';
+        
+        if (clients.length === 0) {
+            list.innerHTML = '<li class="empty-state">No clients</li>';
+        } else {
             [...clients].sort((a, b) => a.name.localeCompare(b.name)).forEach(client => {
                 const li = document.createElement('li');
-                li.className = 'client-item';
-                li.innerHTML = `<span>${escapeHtml(client.name)}</span>`;
-                li.addEventListener('dblclick', () => editClient(client.id, client.name));
+                li.className = 'attendance-item';
+                const checked = session.attendees?.includes(client.id);
+                li.innerHTML = `
+                    <input type="checkbox" id="client-${client.id}" ${checked ? 'checked' : ''}>
+                    <label for="client-${client.id}">${escapeHtml(client.name)}</label>
+                `;
                 list.appendChild(li);
             });
         }
+        modal.classList.add('show');
+    }
 
-        function addClient() {
-            const input = document.getElementById('clientNameInput');
-            const name = input.value.trim();
-            
-            if (!name) {
-                showToast('Enter a client name', 'error');
-                return;
-            }
-            if (name.length > 50) {
-                showToast('Name too long', 'error');
-                return;
-            }
-            
-            const clients = store.getClients();
-            if (clients.some(c => c.name.toLowerCase() === name.toLowerCase())) {
-                showToast('Name already exists', 'error');
-                return;
-            }
-            
-            const newClient = { id: generateUUID(), name };
-            if (store.setClients([...clients, newClient])) {
-                input.value = '';
-                renderClients();
-                showToast('Client added');
-            } else {
-                showToast('Failed to add', 'error');
-            }
+    function saveAttendance() {
+        if (!currentSessionId) return;
+        const checkboxes = document.querySelectorAll('#attendanceList input[type="checkbox"]');
+        const attendeeIds = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.id.replace('client-', ''));
+        
+        const sessions = store.getSessions();
+        const updated = sessions.map(s => s.id === currentSessionId ? { ...s, attendees: attendeeIds } : s);
+        
+        if (store.setSessions(updated)) {
+            document.getElementById('attendanceModal').classList.remove('show');
+            renderSessions();
+            showToast('Saved');
+            updateLastExportDate();
+        }
+    }
+
+    // Templates
+    function renderTemplates() {
+        const list = document.getElementById('templatesList');
+        const templates = store.getTemplates();
+        list.innerHTML = '';
+
+        if (templates.length === 0) {
+            list.innerHTML = '<div class="empty-state">No templates yet</div>';
+            return;
         }
 
-        function editClient(clientId, currentName) {
-            const newName = prompt('Edit name:', currentName);
-            if (newName === null) return; // Cancelled
-            const trimmedName = newName.trim();
-            if (!trimmedName) {
-                showToast('Name cannot be empty', 'error');
-                return;
-            }
-            if (trimmedName.length > 50) {
-                showToast('Name too long', 'error');
-                return;
-            }
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+        [...templates].sort((a, b) => a.name.localeCompare(b.name)).forEach(template => {
+            const card = document.createElement('div');
+            card.className = 'template-card';
             
-            const clients = store.getClients();
-            if (clients.some(c => c.id !== clientId && c.name.toLowerCase() === trimmedName.toLowerCase())) {
-                showToast('Name already exists', 'error');
-                return;
-            }
+            const dayLabels = template.daysOfWeek
+                .sort((a, b) => a - b)
+                .map(day => dayNames[day])
+                .join(', ');
             
-            const updated = clients.map(c => c.id === clientId ? { ...c, name: trimmedName } : c);
-            if (store.setClients(updated)) {
-                renderClients();
-                showToast('Client updated');
-            }
-        }
-
-        function editSession(sessionId, currentName) {
-            const newName = prompt('Edit session name:', currentName);
-            if (newName === null) return; // Cancelled
-            const trimmedName = newName.trim();
-            if (!trimmedName) {
-                showToast('Name cannot be empty', 'error');
-                return;
-            }
-            if (trimmedName.length > 50) {
-                showToast('Name too long', 'error');
-                return;
-            }
-            
-            const sessions = store.getSessions();
-            const updated = sessions.map(s => s.id === sessionId ? { ...s, className: trimmedName } : s);
-            if (store.setSessions(updated)) {
-                renderSessions();
-                showToast('Session updated');
-            }
-        }
-
-        // Sessions
-        function renderSessions() {
-            const list = document.getElementById('sessionsList');
-            const sessions = store.getSessions();
-            list.innerHTML = '';
-
-            if (sessions.length === 0) {
-                list.innerHTML = '<div class="empty-state">No sessions yet</div>';
-                return;
-            }
-
-            [...sessions].sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(session => {
-                const date = new Date(session.date);
-                const card = document.createElement('div');
-                card.className = 'session-card';
-                card.innerHTML = `
-                    <div class="session-card-header">
-                        <span class="session-card-date">${date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span>
-                        <span class="session-card-count">${session.attendees?.length || 0} attended</span>
+            card.innerHTML = `
+                <div class="template-card-header">
+                    <div class="template-card-name">${escapeHtml(template.name)}</div>
+                    <div class="template-card-actions">
+                        <button class="btn-secondary btn-sm" title="Edit template" data-template-edit="${template.id}">✏️</button>
+                        <button class="btn-secondary btn-sm" title="Delete template" data-template-delete="${template.id}" style="color: var(--danger-color);">🗑</button>
                     </div>
-                    <div class="session-card-title">${escapeHtml(session.className || 'Untitled')}</div>
-                `;
-                card.addEventListener('click', (e) => {
-                    // If double-click on title, edit session name; otherwise open attendance
-                    if (e.target.classList.contains('session-card-title')) {
-                        editSession(session.id, session.className || 'Untitled');
-                    } else {
-                        openAttendanceModal(session.id);
-                    }
+                </div>
+                <div class="template-card-schedule">${dayLabels} at ${template.time}</div>
+                <div class="template-card-generate">
+                    <button class="btn-secondary btn-sm" data-template-generate="${template.id}" data-weeks="4">4 weeks</button>
+                    <button class="btn-secondary btn-sm" data-template-generate="${template.id}" data-weeks="8">8 weeks</button>
+                    <button class="btn-secondary btn-sm" data-template-generate="${template.id}" data-weeks="12">12 weeks</button>
+                </div>
+            `;
+            
+            // Edit button
+            card.querySelector(`[data-template-edit="${template.id}"]`).addEventListener('click', (e) => {
+                e.stopPropagation();
+                openEditTemplateModal(template.id);
+            });
+            
+            // Delete button
+            card.querySelector(`[data-template-delete="${template.id}"]`).addEventListener('click', (e) => {
+                e.stopPropagation();
+                openDeleteTemplateModal(template.id, template.name);
+            });
+            
+            // Generate buttons
+            card.querySelectorAll(`[data-template-generate="${template.id}"]`).forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const weeks = parseInt(e.target.dataset.weeks);
+                    generateSessionsFromTemplate(template.id, weeks);
                 });
-                list.appendChild(card);
+            });
+            
+            list.appendChild(card);
+        });
+    }
+
+    function openCreateTemplateModal() {
+        document.getElementById('templateNameInput').value = '';
+        document.getElementById('templateTimeInput').value = '06:00';
+        // Set default start date to today
+        const today = new Date();
+        const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        document.getElementById('templateStartDateInput').value = todayStr;
+        
+        // Clear all day checkboxes
+        document.querySelectorAll('#createTemplateModal .day-checkboxes input').forEach(cb => cb.checked = false);
+        
+        document.getElementById('createTemplateModal').classList.add('show');
+    }
+
+    function createTemplate() {
+        const name = document.getElementById('templateNameInput').value.trim();
+        const time = document.getElementById('templateTimeInput').value;
+        const startDate = document.getElementById('templateStartDateInput').value;
+        
+        // Get selected days
+        const selectedDays = [];
+        document.querySelectorAll('#createTemplateModal .day-checkboxes input:checked').forEach(cb => {
+            selectedDays.push(parseInt(cb.value));
+        });
+        
+        if (!name) {
+            showToast('Enter a template name', 'error');
+            return;
+        }
+        if (selectedDays.length === 0) {
+            showToast('Select at least one day', 'error');
+            return;
+        }
+        if (!time) {
+            showToast('Select a time', 'error');
+            return;
+        }
+        
+        const templates = store.getTemplates();
+        const newTemplate = {
+            id: generateUUID(),
+            name,
+            daysOfWeek: selectedDays.sort((a, b) => a - b),
+            time,
+            startDate: startDate || null,
+            createdAt: new Date().toISOString()
+        };
+        
+        if (store.setTemplates([...templates, newTemplate])) {
+            document.getElementById('createTemplateModal').classList.remove('show');
+            renderTemplates();
+            showToast('Template created');
+        } else {
+            showToast('Failed to create', 'error');
+        }
+    }
+
+    // Edit Template
+    let currentEditTemplateId = null;
+
+    function openEditTemplateModal(templateId) {
+        currentEditTemplateId = templateId;
+        const templates = store.getTemplates();
+        const template = templates.find(t => t.id === templateId);
+        if (!template) return;
+        
+        document.getElementById('editTemplateNameInput').value = template.name;
+        document.getElementById('editTemplateTimeInput').value = template.time;
+        document.getElementById('editTemplateStartDateInput').value = template.startDate || '';
+        
+        // Set day checkboxes
+        document.querySelectorAll('#editTemplateModal .day-checkboxes input').forEach(cb => {
+            cb.checked = template.daysOfWeek.includes(parseInt(cb.value));
+        });
+        
+        document.getElementById('editTemplateModal').classList.add('show');
+    }
+
+    function saveEditTemplate() {
+        if (!currentEditTemplateId) return;
+        
+        const name = document.getElementById('editTemplateNameInput').value.trim();
+        const time = document.getElementById('editTemplateTimeInput').value;
+        const startDate = document.getElementById('editTemplateStartDateInput').value;
+        
+        // Get selected days
+        const selectedDays = [];
+        document.querySelectorAll('#editTemplateModal .day-checkboxes input:checked').forEach(cb => {
+            selectedDays.push(parseInt(cb.value));
+        });
+        
+        if (!name) {
+            showToast('Enter a template name', 'error');
+            return;
+        }
+        if (selectedDays.length === 0) {
+            showToast('Select at least one day', 'error');
+            return;
+        }
+        if (!time) {
+            showToast('Select a time', 'error');
+            return;
+        }
+        
+        const templates = store.getTemplates();
+        const updated = templates.map(t =>
+            t.id === currentEditTemplateId
+                ? { ...t, name, daysOfWeek: selectedDays.sort((a, b) => a - b), time, startDate: startDate || null }
+                : t
+        );
+        
+        if (store.setTemplates(updated)) {
+            document.getElementById('editTemplateModal').classList.remove('show');
+            renderTemplates();
+            showToast('Template updated');
+        }
+        
+        currentEditTemplateId = null;
+    }
+
+    // Delete Template
+    let currentDeleteTemplateId = null;
+
+    function openDeleteTemplateModal(templateId, templateName) {
+        currentDeleteTemplateId = templateId;
+        document.getElementById('deleteTemplateMessage').innerHTML = 
+            `Are you sure you want to delete <strong>${escapeHtml(templateName)}</strong>?`;
+        document.getElementById('deleteTemplateModal').classList.add('show');
+    }
+
+    function confirmDeleteTemplate() {
+        if (!currentDeleteTemplateId) return;
+        
+        if (store.deleteTemplate(currentDeleteTemplateId)) {
+            document.getElementById('deleteTemplateModal').classList.remove('show');
+            renderTemplates();
+            showToast('Template deleted', 'success');
+        } else {
+            showToast('Failed to delete', 'error');
+        }
+        
+        currentDeleteTemplateId = null;
+    }
+
+    // Generate Sessions from Template
+    function generateSessionsFromTemplate(templateId, weeks) {
+        const templates = store.getTemplates();
+        const template = templates.find(t => t.id === templateId);
+        if (!template) return;
+        
+        const sessions = store.getSessions();
+        const newSessions = [];
+        
+        // Use template's startDate as anchor, or today if not set
+        const anchorDate = template.startDate ? new Date(template.startDate) : new Date();
+        anchorDate.setHours(0, 0, 0, 0);
+        
+        // Generate sessions for the next N weeks
+        for (let week = 0; week < weeks; week++) {
+            const weekStart = new Date(anchorDate);
+            weekStart.setDate(anchorDate.getDate() + (week * 7));
+            
+            template.daysOfWeek.forEach(dayOfWeek => {
+                const sessionDate = new Date(weekStart);
+                const currentDay = sessionDate.getDay();
+                const daysUntilTarget = (dayOfWeek - currentDay + 7) % 7;
+                sessionDate.setDate(sessionDate.getDate() + daysUntilTarget);
+                
+                // Skip if date is in the past
+                if (sessionDate < anchorDate) return;
+                
+                const dateStr = sessionDate.toISOString().split('T')[0];
+                
+                // Check if session already exists for this date and template
+                const exists = sessions.some(s => 
+                    s.date === dateStr && 
+                    s.templateId === templateId &&
+                    s.className === template.name
+                );
+                
+                if (!exists) {
+                    newSessions.push({
+                        id: generateUUID(),
+                        date: dateStr,
+                        className: template.name,
+                        attendees: [],
+                        templateId: templateId
+                    });
+                }
             });
         }
-
-        function openCreateSessionModal() {
-            const modal = document.getElementById('createSessionModal');
-            const dateInput = document.getElementById('sessionDateInput');
-            const today = new Date();
-            dateInput.value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-            document.getElementById('sessionClassInput').value = '';
-            modal.classList.add('show');
-        }
-
-        function createSession() {
-            const date = document.getElementById('sessionDateInput').value;
-            const className = document.getElementById('sessionClassInput').value.trim();
-            
-            if (!date) {
-                showToast('Select a date', 'error');
-                return;
-            }
-            
-            const sessions = store.getSessions();
-            const newSession = { id: generateUUID(), date, className: className || 'Untitled', attendees: [] };
-            
-            if (store.setSessions([...sessions, newSession])) {
-                document.getElementById('createSessionModal').classList.remove('show');
+        
+        if (newSessions.length > 0) {
+            if (store.setSessions([...sessions, ...newSessions])) {
                 renderSessions();
-                showToast('Session created');
-            }
-        }
-
-        // Attendance
-        let currentSessionId = null;
-
-        function openAttendanceModal(sessionId) {
-            const sessions = store.getSessions();
-            const session = sessions.find(s => s.id === sessionId);
-            if (!session) return;
-            
-            currentSessionId = sessionId;
-            const modal = document.getElementById('attendanceModal');
-            document.getElementById('attendanceModalTitle').textContent = 
-                `${escapeHtml(session.className || 'Untitled')} · ${new Date(session.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}`;
-            
-            const clients = store.getClients();
-            const list = document.getElementById('attendanceList');
-            list.innerHTML = '';
-            
-            if (clients.length === 0) {
-                list.innerHTML = '<li class="empty-state">No clients</li>';
+                showToast(`Generated ${newSessions.length} sessions`, 'success');
             } else {
-                [...clients].sort((a, b) => a.name.localeCompare(b.name)).forEach(client => {
-                    const li = document.createElement('li');
-                    li.className = 'attendance-item';
-                    const checked = session.attendees?.includes(client.id);
-                    li.innerHTML = `
-                        <input type="checkbox" id="client-${client.id}" ${checked ? 'checked' : ''}>
-                        <label for="client-${client.id}">${escapeHtml(client.name)}</label>
-                    `;
-                    list.appendChild(li);
+                showToast('Failed to generate sessions', 'error');
+            }
+        } else {
+            showToast('No new sessions to generate (all already exist)');
+        }
+    }
+
+    // Export
+    function exportCSV() {
+        const clients = store.getClients();
+        const sessions = store.getSessions();
+        if (sessions.length === 0) {
+            showToast('No sessions', 'error');
+            return;
+        }
+        
+        let csv = 'Date,Class,Client\n';
+        sessions.forEach(session => {
+            const className = `"${(session.className || 'Untitled').replace(/"/g, '""')}"`;
+            if (session.attendees?.length) {
+                session.attendees.forEach(id => {
+                    const client = clients.find(c => c.id === id);
+                    if (client) csv += `${session.date},${className},"${client.name.replace(/"/g, '""')}"\n`;
                 });
-            }
-            modal.classList.add('show');
-        }
-
-        function saveAttendance() {
-            if (!currentSessionId) return;
-            const checkboxes = document.querySelectorAll('#attendanceList input[type="checkbox"]');
-            const attendeeIds = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.id.replace('client-', ''));
-            
-            const sessions = store.getSessions();
-            const updated = sessions.map(s => s.id === currentSessionId ? { ...s, attendees: attendeeIds } : s);
-            
-            if (store.setSessions(updated)) {
-                document.getElementById('attendanceModal').classList.remove('show');
-                renderSessions();
-                showToast('Saved');
-                updateLastExportDate();
-            }
-        }
-
-        // Export
-        function exportCSV() {
-            const clients = store.getClients();
-            const sessions = store.getSessions();
-            if (sessions.length === 0) {
-                showToast('No sessions', 'error');
-                return;
-            }
-            
-            let csv = 'Date,Class,Client\n';
-            sessions.forEach(session => {
-                const className = `"${(session.className || 'Untitled').replace(/"/g, '""')}"`;
-                if (session.attendees?.length) {
-                    session.attendees.forEach(id => {
-                        const client = clients.find(c => c.id === id);
-                        if (client) csv += `${session.date},${className},"${client.name.replace(/"/g, '""')}"\n`;
-                    });
-                } else {
-                    csv += `${session.date},${className},\n`;
-                }
-            });
-            
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `attendance_${new Date().toISOString().split('T')[0]}.csv`;
-            a.click();
-            URL.revokeObjectURL(a.href);
-            showToast('CSV exported');
-            updateLastExportDate();
-        }
-
-        function copyCSV() {
-            const clients = store.getClients();
-            const sessions = store.getSessions();
-            if (sessions.length === 0) {
-                showToast('No sessions', 'error');
-                return;
-            }
-            
-            let csv = 'Date,Class,Client\n';
-            sessions.forEach(session => {
-                const className = `"${(session.className || 'Untitled').replace(/"/g, '""')}"`;
-                if (session.attendees?.length) {
-                    session.attendees.forEach(id => {
-                        const client = clients.find(c => c.id === id);
-                        if (client) csv += `${session.date},${className},"${client.name.replace(/"/g, '""')}"\n`;
-                    });
-                } else {
-                    csv += `${session.date},${className},\n`;
-                }
-            });
-            
-            navigator.clipboard.writeText(csv).then(() => showToast('Copied to clipboard'), () => showToast('Failed', 'error'));
-            updateLastExportDate();
-        }
-
-        function backupJSON() {
-            const data = {
-                clients: store.getClients(),
-                sessions: store.getSessions(),
-                meta: store.getMeta()
-            };
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `6amreg_backup_${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
-            URL.revokeObjectURL(a.href);
-            showToast('Backup created');
-        }
-
-        function restoreJSON(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = ev => {
-                try {
-                    const data = JSON.parse(ev.target.result);
-                    if (data.clients && data.sessions && store.setClients(data.clients) && store.setSessions(data.sessions)) {
-                        if (data.meta) store.setMeta(data.meta);
-                        renderClients();
-                        renderSessions();
-                        updateLastExportInfo();
-                        showToast('Restored');
-                    }
-                } catch (err) {
-                    showToast('Invalid file', 'error');
-                }
-            };
-            reader.readAsText(file);
-            e.target.value = '';
-        }
-
-        function updateLastExportDate() {
-            const meta = store.getMeta();
-            meta.lastExportDateISO = new Date().toISOString();
-            store.setMeta(meta);
-            updateLastExportInfo();
-        }
-
-        function updateLastExportInfo() {
-            const meta = store.getMeta();
-            const info = document.getElementById('lastExportInfo');
-            if (meta.lastExportDateISO) {
-                info.textContent = `Last export: ${new Date(meta.lastExportDateISO).toLocaleDateString()}`;
             } else {
-                info.textContent = 'Last export: never';
+                csv += `${session.date},${className},\n`;
             }
-        }
+        });
+        
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `attendance_${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+        showToast('CSV exported');
+        updateLastExportDate();
+    }
 
-        // Trainer
-        function showTrainerNameModal() {
-            document.getElementById('trainerNameModal').classList.add('show');
+    function copyCSV() {
+        const clients = store.getClients();
+        const sessions = store.getSessions();
+        if (sessions.length === 0) {
+            showToast('No sessions', 'error');
+            return;
         }
+        
+        let csv = 'Date,Class,Client\n';
+        sessions.forEach(session => {
+            const className = `"${(session.className || 'Untitled').replace(/"/g, '""')}"`;
+            if (session.attendees?.length) {
+                session.attendees.forEach(id => {
+                    const client = clients.find(c => c.id === id);
+                    if (client) csv += `${session.date},${className},"${client.name.replace(/"/g, '""')}"\n`;
+                });
+            } else {
+                csv += `${session.date},${className},\n`;
+            }
+        });
+        
+        navigator.clipboard.writeText(csv).then(() => showToast('Copied to clipboard'), () => showToast('Failed', 'error'));
+        updateLastExportDate();
+    }
 
-        function saveTrainerName() {
-            const name = document.getElementById('trainerNameInput').value.trim();
-            if (!name) {
-                showToast('Enter your name', 'error');
-                return;
+    function backupJSON() {
+        const data = {
+            clients: store.getClients(),
+            sessions: store.getSessions(),
+            templates: store.getTemplates(),
+            meta: store.getMeta()
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `6amreg_backup_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+        showToast('Backup created');
+    }
+
+    function restoreJSON(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => {
+            try {
+                const data = JSON.parse(ev.target.result);
+                if (data.clients && data.sessions && store.setClients(data.clients) && store.setSessions(data.sessions)) {
+                    if (data.meta) store.setMeta(data.meta);
+                    if (data.templates) store.setTemplates(data.templates);
+                    renderClients();
+                    renderSessions();
+                    renderTemplates();
+                    updateLastExportInfo();
+                    showToast('Restored');
+                }
+            } catch (err) {
+                showToast('Invalid file', 'error');
             }
-            const meta = store.getMeta();
-            meta.trainerName = name;
-            if (store.setMeta(meta)) {
-                document.getElementById('trainerNameModal').classList.remove('show');
-                initApp();
-            }
+        };
+        reader.readAsText(file);
+        e.target.value = '';
+    }
+
+    function updateLastExportDate() {
+        const meta = store.getMeta();
+        meta.lastExportDateISO = new Date().toISOString();
+        store.setMeta(meta);
+        updateLastExportInfo();
+    }
+
+    function updateLastExportInfo() {
+        const meta = store.getMeta();
+        const info = document.getElementById('lastExportInfo');
+        if (meta.lastExportDateISO) {
+            info.textContent = `Last export: ${new Date(meta.lastExportDateISO).toLocaleDateString()}`;
+        } else {
+            info.textContent = 'Last export: never';
         }
+    }
 
-        // Init
-        function initApp() {
-            if (!store.hasTrainerName()) {
-                showTrainerNameModal();
-                return;
-            }
-            initTheme();
+    // Trainer
+    function showTrainerNameModal() {
+        document.getElementById('trainerNameModal').classList.add('show');
+    }
+
+    function saveTrainerName() {
+        const name = document.getElementById('trainerNameInput').value.trim();
+        if (!name) {
+            showToast('Enter your name', 'error');
+            return;
+        }
+        const meta = store.getMeta();
+        meta.trainerName = name;
+        if (store.setMeta(meta)) {
+            document.getElementById('trainerNameModal').classList.remove('show');
+            initApp();
+        }
+    }
+
+    // Init
+    function initApp() {
+        if (!store.hasTrainerName()) {
+            showTrainerNameModal();
+            return;
+        }
+        initTheme();
+        renderClients();
+        renderSessions();
+        renderTemplates();
+        updateLastExportInfo();
+    }
+
+    // Events
+    document.getElementById('addClientBtn').addEventListener('click', addClient);
+    document.getElementById('clientNameInput').addEventListener('keypress', e => e.key === 'Enter' && addClient());
+    document.getElementById('toggleClientsBtn').addEventListener('click', function() {
+        const section = document.getElementById('clientsSection');
+        const btn = this;
+        if (section.classList.contains('collapsed')) {
+            section.classList.remove('collapsed');
+            btn.textContent = 'Hide clients ▾';
+        } else {
+            section.classList.add('collapsed');
+            btn.textContent = 'Show clients ▸';
+        }
+    });
+    document.getElementById('toggleTemplatesBtn').addEventListener('click', function() {
+        const section = document.getElementById('templatesSection');
+        const btn = this;
+        if (section.classList.contains('collapsed')) {
+            section.classList.remove('collapsed');
+            btn.textContent = 'Hide templates ▾';
+        } else {
+            section.classList.add('collapsed');
+            btn.textContent = 'Show templates ▸';
+        }
+    });
+    document.getElementById('newSessionBtn').addEventListener('click', openCreateSessionModal);
+    document.getElementById('closeSessionModal').addEventListener('click', () => document.getElementById('createSessionModal').classList.remove('show'));
+    document.getElementById('cancelSessionBtn').addEventListener('click', () => document.getElementById('createSessionModal').classList.remove('show'));
+    document.getElementById('createSessionBtn').addEventListener('click', createSession);
+    document.getElementById('closeAttendanceModal').addEventListener('click', () => document.getElementById('attendanceModal').classList.remove('show'));
+    document.getElementById('closeAttendanceModalBtn').addEventListener('click', () => document.getElementById('attendanceModal').classList.remove('show'));
+    document.getElementById('saveAttendanceBtn').addEventListener('click', saveAttendance);
+    document.getElementById('newTemplateBtn').addEventListener('click', openCreateTemplateModal);
+    document.getElementById('closeCreateTemplateModal').addEventListener('click', () => document.getElementById('createTemplateModal').classList.remove('show'));
+    document.getElementById('cancelCreateTemplateBtn').addEventListener('click', () => document.getElementById('createTemplateModal').classList.remove('show'));
+    document.getElementById('createTemplateBtn').addEventListener('click', createTemplate);
+    document.getElementById('closeEditTemplateModal').addEventListener('click', () => document.getElementById('editTemplateModal').classList.remove('show'));
+    document.getElementById('cancelEditTemplateBtn').addEventListener('click', () => document.getElementById('editTemplateModal').classList.remove('show'));
+    document.getElementById('saveEditTemplateBtn').addEventListener('click', saveEditTemplate);
+    document.getElementById('closeDeleteTemplateModal').addEventListener('click', () => document.getElementById('deleteTemplateModal').classList.remove('show'));
+    document.getElementById('cancelDeleteTemplateBtn').addEventListener('click', () => document.getElementById('deleteTemplateModal').classList.remove('show'));
+    document.getElementById('confirmDeleteTemplateBtn').addEventListener('click', confirmDeleteTemplate);
+    document.getElementById('exportCSVBtn').addEventListener('click', exportCSV);
+    document.getElementById('copyCSVBtn').addEventListener('click', copyCSV);
+    document.getElementById('backupJSONBtn').addEventListener('click', backupJSON);
+    document.getElementById('restoreJSONBtn').addEventListener('click', () => document.getElementById('restoreFileInput').click());
+    document.getElementById('restoreFileInput').addEventListener('change', restoreJSON);
+    document.getElementById('saveTrainerNameBtn').addEventListener('click', saveTrainerName);
+    document.getElementById('closeDeleteClientModal').addEventListener('click', () => document.getElementById('deleteClientModal').classList.remove('show'));
+    document.getElementById('cancelDeleteClientBtn').addEventListener('click', () => document.getElementById('deleteClientModal').classList.remove('show'));
+    document.getElementById('confirmDeleteClientBtn').addEventListener('click', confirmDeleteClient);
+    document.getElementById('closeEditClientModal').addEventListener('click', () => document.getElementById('editClientModal').classList.remove('show'));
+    document.getElementById('cancelEditClientBtn').addEventListener('click', () => document.getElementById('editClientModal').classList.remove('show'));
+    document.getElementById('saveEditClientBtn').addEventListener('click', saveEditClient);
+    document.getElementById('editClientNameInput').addEventListener('keypress', e => e.key === 'Enter' && saveEditClient());
+    document.getElementById('closeEditSessionModal').addEventListener('click', () => document.getElementById('editSessionModal').classList.remove('show'));
+    document.getElementById('cancelEditSessionBtn').addEventListener('click', () => document.getElementById('editSessionModal').classList.remove('show'));
+    document.getElementById('saveEditSessionBtn').addEventListener('click', saveEditSession);
+    document.getElementById('editSessionNameInput').addEventListener('keypress', e => e.key === 'Enter' && saveEditSession());
+    document.getElementById('deleteSessionBtn').addEventListener('click', () => openDeleteSessionModal(currentEditSessionId));
+    document.getElementById('closeDeleteSessionModal').addEventListener('click', () => document.getElementById('deleteSessionModal').classList.remove('show'));
+    document.getElementById('cancelDeleteSessionBtn').addEventListener('click', () => document.getElementById('deleteSessionModal').classList.remove('show'));
+    document.getElementById('confirmDeleteSessionBtn').addEventListener('click', confirmDeleteSession);
+    
+    window.addEventListener('storage', e => {
+        if (e.key === store.CLIENTS_KEY || e.key === store.SESSIONS_KEY || e.key === store.TEMPLATES_KEY) {
             renderClients();
             renderSessions();
-            updateLastExportInfo();
+            renderTemplates();
         }
+    });
 
-        // Events
-        document.getElementById('addClientBtn').addEventListener('click', addClient);
-        document.getElementById('clientNameInput').addEventListener('keypress', e => e.key === 'Enter' && addClient());
-        document.getElementById('toggleClientsBtn').addEventListener('click', function() {
-            const section = document.getElementById('clientsSection');
-            const btn = this;
-            if (section.classList.contains('collapsed')) {
-                section.classList.remove('collapsed');
-                btn.textContent = 'Hide clients ▾';
-            } else {
-                section.classList.add('collapsed');
-                btn.textContent = 'Show clients ▸';
-            }
-        });
-        document.getElementById('newSessionBtn').addEventListener('click', openCreateSessionModal);
-        document.getElementById('closeSessionModal').addEventListener('click', () => document.getElementById('createSessionModal').classList.remove('show'));
-        document.getElementById('cancelSessionBtn').addEventListener('click', () => document.getElementById('createSessionModal').classList.remove('show'));
-        document.getElementById('createSessionBtn').addEventListener('click', createSession);
-        document.getElementById('closeAttendanceModal').addEventListener('click', () => document.getElementById('attendanceModal').classList.remove('show'));
-        document.getElementById('closeAttendanceModalBtn').addEventListener('click', () => document.getElementById('attendanceModal').classList.remove('show'));
-        document.getElementById('saveAttendanceBtn').addEventListener('click', saveAttendance);
-        document.getElementById('exportCSVBtn').addEventListener('click', exportCSV);
-        document.getElementById('copyCSVBtn').addEventListener('click', copyCSV);
-        document.getElementById('backupJSONBtn').addEventListener('click', backupJSON);
-        document.getElementById('restoreJSONBtn').addEventListener('click', () => document.getElementById('restoreFileInput').click());
-        document.getElementById('restoreFileInput').addEventListener('change', restoreJSON);
-        document.getElementById('saveTrainerNameBtn').addEventListener('click', saveTrainerName);
-        
-        window.addEventListener('storage', e => {
-            if (e.key === store.CLIENTS_KEY || e.key === store.SESSIONS_KEY) {
-                renderClients();
-                renderSessions();
-            }
-        });
+    window.addEventListener('DOMContentLoaded', initApp);
+</script>
 
-        window.addEventListener('DOMContentLoaded', initApp);
-    </script>
-</body>
-</html>
+</body></html>
